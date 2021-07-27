@@ -10,6 +10,8 @@ using ProEventos.Application.Contratos;
 using ProEventos.Persistence;
 using ProEventos.Persistence.Contextos;
 using ProEventos.Persistence.Contratos;
+using AutoMapper;
+using System;
 
 namespace ProEventos.API
 {
@@ -39,6 +41,7 @@ namespace ProEventos.API
             services.AddScoped<IEventoPersist, EventoPersist>();
 
             services.AddCors();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProEventos.API", Version = "v1" });

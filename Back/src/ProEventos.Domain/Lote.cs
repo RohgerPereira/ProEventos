@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProEventos.Domain
 {
@@ -16,6 +17,7 @@ namespace ProEventos.Domain
 
        public int  Quantidade { get; set; }
 
+      //  [ForeignKey("Sis.Eventos")]
        public int EventoId { get; set; }
 
        public Evento Evento { get; set; }
