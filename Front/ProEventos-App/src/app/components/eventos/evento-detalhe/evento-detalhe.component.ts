@@ -1,6 +1,11 @@
+import { Evento } from ' @app/models/Evento';
+import { EventoService } from ' @app/services/evento.service';
 import { Component, OnInit} from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BsLocaleService } from 'ngx-bootstrap/datepicker';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-evento-detalhe',
@@ -9,17 +14,56 @@ import { Router } from '@angular/router';
 })
 export class EventoDetalheComponent implements OnInit {
 
+  evento = {} as Evento;
+
+
   public form = {} as FormGroup;
 
   get f(): any {
     return this.form.controls;
+  };
+
+  get bsConfig(): any {
+    return {
+             adaptivePosition: true,
+             dateInputFormat: 'DD/MM/YYYY HH:mm',
+             containerClass: 'theme-blue',
+             showWeekNumbers: false
+           };
   }
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder,
+              private localeService: BsLocaleService,
+              private router: ActivatedRoute,
+              private eventoService: EventoService,
+              private spinner: NgxSpinnerService,
+              private toastr: ToastrService) {
+    this.localeService.use('pt-br');
+   }
+
+   public carregarEvento(): void {
+     const eventoIdParam = this.router.snapshot.paramMap.get('id');
+     if (eventoIdParam != null){
+       this.spinner.show();
+       this.eventoService.getEventoById(+eventoIdParam).subscribe
+       (
+            (evento: Evento) => {
+              this.evento = {...evento};
+              this.form.patchValue(this.evento);
+            },
+            (error: any) => {
+              console.error(error);
+              this.toastr.error('Erro ao tentar carregar o evento.', 'Erro!');
+              this.spinner.hide();
+            },
+            () => this.spinner.hide(),
+       );
+     }
+   }
 
   ngOnInit(): void {
+    this.carregarEvento();
     this.validation();
-
   }
 
   public validation(): void {
@@ -47,4 +91,7 @@ export class EventoDetalheComponent implements OnInit {
       this.form.reset();
     }
 
+    public cssValidator(campoForm: FormControl): any {
+      return {'is-invalid': campoForm.errors && campoForm.touched};
+    }
   }

@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ProEventos.Domain
 
 {
-    [Table("sis.Eventos")]
+   // [Table("sis.Eventos")]
     public class Evento
     {
         //[Key]
